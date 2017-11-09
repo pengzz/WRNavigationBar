@@ -16,6 +16,7 @@
 #import "AntForestController.h"
 #import "AllTransparent.h"
 #import "LaGouController.h"
+#import "PzzAllTransparent.h"
 
 @interface NormalListController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong) UITableView *tableView;
@@ -38,7 +39,7 @@
 #pragma mark - tableview delegate / dataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 8;
+    return 8+1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -71,7 +72,9 @@
         case 7:
             str = @"拉钩App首页";
             break;
-        
+        case 8:
+            str = @"zz导航栏图片渐变";
+            break;
         default:
             break;
     }
@@ -135,6 +138,12 @@
         {
             LaGouController *laGouVC = [LaGouController new];
             [self.navigationController pushViewController:laGouVC animated:YES];
+        }
+            break;
+        case 8:
+        {
+            PzzAllTransparent *vc = [PzzAllTransparent new];
+            [self.navigationController pushViewController:vc animated:YES];
         }
             break;
         default:
