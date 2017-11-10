@@ -23,7 +23,7 @@
 
 /** set default barBackgroundImage of UINavigationBar */
 /** warning: wr_setDefaultNavBarBackgroundImage is deprecated! place use WRCustomNavigationBar */
-//+ (void)wr_setDefaultNavBarBackgroundImage:(UIImage *)image;
++ (void)wr_setDefaultNavBarBackgroundImage:(UIImage *)image;
 
 /** set default tintColor of UINavigationBar */
 + (void)wr_setDefaultNavBarTintColor:(UIColor *)color;
@@ -63,7 +63,7 @@
 
 /** record current ViewController navigationBar backgroundImage */
 /** warning: wr_setDefaultNavBarBackgroundImage is deprecated! place use WRCustomNavigationBar */
-//- (void)wr_setNavBarBackgroundImage:(UIImage *)image;
+- (void)wr_setNavBarBackgroundImage:(UIImage *)image;
 - (UIImage *)wr_navBarBackgroundImage;
 
 /** record current ViewController navigationBar barTintColor */
@@ -95,6 +95,19 @@
 //- (void)wr_setCustomNavBar:(WRCustomNavigationBar *)navBar;
 
 @end
+
+
+
+
+#pragma mark - UIImage
+NS_ASSUME_NONNULL_BEGIN
+@interface UIImage (ZZAdd)
+/** Create and return a 1x1 point size image with the given color. */
++ (nullable UIImage *)imageWithColor:(UIColor *)color;
+/** Create and return a pure color image with the given color and size. */
++ (nullable UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size;
+@end
+NS_ASSUME_NONNULL_END
 
 
 

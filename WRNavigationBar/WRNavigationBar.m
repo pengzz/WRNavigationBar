@@ -147,6 +147,7 @@ static char kWRDefaultNavBarShadowImageHiddenKey;
 static char kWRBackgroundViewKey;
 static char kWRBackgroundImageViewKey;
 static char kWRBackgroundImageKey;
+static char kWRBackgroundImageViewTopIvKey;//BackgroundImageVie中上层TopIv//zzz
 
 - (int)navBarBottom
 {
@@ -181,6 +182,15 @@ static char kWRBackgroundImageKey;
 {
     objc_setAssociatedObject(self, &kWRBackgroundImageKey, image, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
+//zzz
+- (UIImageView *)backgroundImageViewTopIv
+{
+    return (UIImageView *)objc_getAssociatedObject(self, &kWRBackgroundImageViewTopIvKey);
+}
+- (void)setBackgroundImageViewTopIv:(UIImageView *)bgTopIv
+{
+    objc_setAssociatedObject(self, &kWRBackgroundImageViewTopIvKey, bgTopIv, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 // set navigationBar backgroundImage
 - (void)wr_setBackgroundImage:(UIImage *)image
@@ -202,6 +212,52 @@ static char kWRBackgroundImageKey;
     }
     self.backgroundImage = image;
     self.backgroundImageView.image = image;
+    
+    //zzz隐藏上层图片：
+    if(self.backgroundImageViewTopIv){
+        self.backgroundImageViewTopIv.alpha = 0.0;//隐藏上层图片
+    }
+}
+
+//zzz
+- (void)wr_setBackgroundImage:(UIImage *)image topImage:(UIImage *)topImage;
+{
+    //下层显示：还是按原来的代码处理
+    {
+        [self.backgroundView removeFromSuperview];
+        self.backgroundView = nil;
+        if (self.backgroundImageView == nil)
+        {
+            // add a image(nil color) to _UIBarBackground make it clear
+            [self setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+            if (self.subviews.count > 0)
+            {
+                self.backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), [self navBarBottom])];
+                self.backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+                
+                // _UIBarBackground is first subView for navigationBar
+                [self.subviews.firstObject insertSubview:self.backgroundImageView atIndex:0];
+            }
+        }
+        self.backgroundImage = image;
+        self.backgroundImageView.image = image;
+    }
+    
+    //上层显示：处理
+    if(image==topImage){
+        if(self.backgroundImageViewTopIv){
+            self.backgroundImageViewTopIv.alpha = 0.0;//隐藏上层图片
+        }
+    }else{//设置上层图片
+        if(self.backgroundImageViewTopIv == nil){
+            self.backgroundImageViewTopIv = [[UIImageView alloc] initWithFrame:self.backgroundImageView.bounds];
+            self.backgroundImageViewTopIv.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            [self.backgroundImageView addSubview:self.backgroundImageViewTopIv];
+            self.backgroundImageViewTopIv.alpha = 0.0;//先不显示
+        }
+        [self.backgroundImageView addSubview:self.backgroundImageViewTopIv];//修正一个bug
+        self.backgroundImageViewTopIv.image = topImage;
+    }
 }
 
 // set navigationBar barTintColor
@@ -403,6 +459,11 @@ static int wrPushDisplayCount = 0;
 {
     [self.navigationBar wr_setBackgroundImage:backgroundImage];
 }
+//zzz
+- (void)setNeedsNavigationBarUpdateForBarBackgroundImage:(UIImage *)backgroundImage topImage:(UIImage *)topImage
+{
+    [self.navigationBar wr_setBackgroundImage:backgroundImage topImage:topImage];
+}
 - (void)setNeedsNavigationBarUpdateForBarTintColor:(UIColor *)barTintColor
 {
     [self.navigationBar wr_setBackgroundColor:barTintColor];
@@ -410,6 +471,17 @@ static int wrPushDisplayCount = 0;
 - (void)setNeedsNavigationBarUpdateForBarBackgroundAlpha:(CGFloat)barBackgroundAlpha
 {
     [self.navigationBar wr_setBackgroundAlpha:barBackgroundAlpha];
+}
+- (void)setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:(CGFloat)topIvAlpha
+{
+    //zz:设置topIv的alpha
+    if(self.navigationBar.backgroundImageView){
+        if(self.navigationBar.backgroundImageViewTopIv){
+            if(!self.navigationBar.backgroundImageViewTopIv.hidden){
+                self.navigationBar.backgroundImageViewTopIv.alpha = topIvAlpha;
+            }
+        }
+    }
 }
 - (void)setNeedsNavigationBarUpdateForTintColor:(UIColor *)tintColor
 {
@@ -431,7 +503,7 @@ static int wrPushDisplayCount = 0;
     self.navigationBar.titleTextAttributes = newTitleTextAttributes;
 }
 
-- (void)updateNavigationBarWithFromVC:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress
+- (void)updateNavigationBarWithFromVC0:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress
 {
     // change navBarBarTintColor
     UIColor *fromBarTintColor = [fromVC wr_navBarBarTintColor];
@@ -457,6 +529,96 @@ static int wrPushDisplayCount = 0;
     CGFloat newBarBackgroundAlpha = [WRNavigationBar middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
     [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
 }
+//zzz
+- (void)updateNavigationBarWithFromVC:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress{
+    UIViewController *topVC = fromVC;
+    [self updateNavigationBarWithFromVC:fromVC toVC:toVC progress:progress topVC:topVC];
+}
+- (void)updateNavigationBarWithFromVC:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress topVC:(UIViewController *)topVC
+{
+    UIImage *fromVC_barBgImage = [fromVC wr_navBarBackgroundImage];
+    UIImage *toVC_barBgImage = [toVC wr_navBarBackgroundImage];
+    if(fromVC_barBgImage==nil && toVC_barBgImage==nil){
+        // change navBarBarTintColor
+        UIColor *fromBarTintColor = [fromVC wr_navBarBarTintColor];
+        UIColor *toBarTintColor = [toVC wr_navBarBarTintColor];
+        UIColor *newBarTintColor = [WRNavigationBar middleColor:fromBarTintColor toColor:toBarTintColor percent:progress];
+        [self setNeedsNavigationBarUpdateForBarTintColor:newBarTintColor];
+        
+        // change navBar _UIBarBackground alpha
+        CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
+        CGFloat toBarBackgroundAlpha = [toVC wr_navBarBackgroundAlpha];
+        CGFloat newBarBackgroundAlpha = [WRNavigationBar middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
+        [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
+    }
+    else{
+        NSLog(@"progress==%f",  progress);
+        UIImage *fromVC_barBgImage = [fromVC wr_navBarBackgroundImage];
+        UIImage *toVC_barBgImage = [toVC wr_navBarBackgroundImage];
+        CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
+        CGFloat toBarBackgroundAlpha = [toVC wr_navBarBackgroundAlpha];
+        if(fromBarBackgroundAlpha>1.0){
+            fromBarBackgroundAlpha=1.0;
+        }
+        if(toBarBackgroundAlpha>1.0){
+            toBarBackgroundAlpha=1.0;
+        }
+        fromVC_barBgImage = fromVC_barBgImage!=nil?fromVC_barBgImage:[UIImage imageWithColor:[fromVC wr_navBarBarTintColor]];
+        toVC_barBgImage   = toVC_barBgImage!=nil?toVC_barBgImage:[UIImage imageWithColor:[toVC wr_navBarBarTintColor]];
+        CGFloat newBarBackgroundAlpha = [WRNavigationBar middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
+        //1:整体backView
+        [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];//背景alpha
+        
+        //2:两个背景image
+        UIImage *top_image = nil;
+        UIImage *down_image = nil;
+        if(topVC==fromVC){//pop
+            top_image = fromVC_barBgImage;
+            down_image = toVC_barBgImage;
+        }
+        if(topVC==toVC){//push
+            top_image = toVC_barBgImage;
+            down_image = fromVC_barBgImage;
+        }
+        [self setNeedsNavigationBarUpdateForBarBackgroundImage:down_image topImage:top_image];
+        
+        //3:topIv
+        CGFloat topBarBackgroundAlpha = [topVC wr_navBarBackgroundAlpha];
+        topBarBackgroundAlpha = topBarBackgroundAlpha>1.0?1.0:topBarBackgroundAlpha;
+        CGFloat topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];//pop
+        if(topVC==fromVC){//pop
+            topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];
+        }
+        if(topVC==toVC){//push
+            topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:progress];
+        }
+        NSLog(@"before:topIvAlpha==%f",topIvAlpha);
+        topIvAlpha = topIvAlpha/newBarBackgroundAlpha;
+        NSLog(@"比例后before:topIvAlpha==%f",topIvAlpha);
+        topIvAlpha = topIvAlpha>1.0?1.0:topIvAlpha;
+        NSLog(@"修正后before:topIvAlpha==%f",topIvAlpha);
+        [self setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:topIvAlpha];//背景alpha
+    }
+    
+    // change navBarTintColor
+    UIColor *fromTintColor = [fromVC wr_navBarTintColor];
+    UIColor *toTintColor = [toVC wr_navBarTintColor];
+    UIColor *newTintColor = [WRNavigationBar middleColor:fromTintColor toColor:toTintColor percent:progress];
+    [self setNeedsNavigationBarUpdateForTintColor:newTintColor];
+    
+    // change navBarTitleColor
+    UIColor *fromTitleColor = [fromVC wr_navBarTitleColor];
+    UIColor *toTitleColor = [toVC wr_navBarTitleColor];
+    UIColor *newTitleColor = [WRNavigationBar middleColor:fromTitleColor toColor:toTitleColor percent:progress];
+    [self setNeedsNavigationBarUpdateForTitleColor:newTitleColor];
+    
+    // change navBar _UIBarBackground alpha
+    //CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
+    //CGFloat toBarBackgroundAlpha = [toVC wr_navBarBackgroundAlpha];
+    //CGFloat newBarBackgroundAlpha = [UIColor middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
+    //[self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
+}
+
 
 #pragma mark - call swizzling methods active 主动调用交换方法
 + (void)load
@@ -551,7 +713,9 @@ static int wrPushDisplayCount = 0;
         CGFloat pushProgress = [self wrPushProgress];
         UIViewController *fromVC = [self.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
         UIViewController *toVC = [self.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-        [self updateNavigationBarWithFromVC:fromVC toVC:toVC progress:pushProgress];
+        //[self updateNavigationBarWithFromVC:fromVC toVC:toVC progress:pushProgress];//old
+        //zzz
+        [self updateNavigationBarWithFromVC:fromVC toVC:toVC progress:pushProgress topVC:toVC];//zzz
     }
 }
 
@@ -589,13 +753,61 @@ static int wrPushDisplayCount = 0;
 }
 
 // deal the gesture of return break off
-- (void)dealInteractionChanges:(id<UIViewControllerTransitionCoordinatorContext>)context
+- (void)dealInteractionChanges0:(id<UIViewControllerTransitionCoordinatorContext>)context
 {
     void (^animations) (UITransitionContextViewControllerKey) = ^(UITransitionContextViewControllerKey key){
         UIColor *curColor = [[context viewControllerForKey:key] wr_navBarBarTintColor];
         CGFloat curAlpha = [[context viewControllerForKey:key] wr_navBarBackgroundAlpha];
         [self setNeedsNavigationBarUpdateForBarTintColor:curColor];
         [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:curAlpha];
+    };
+    
+    // after that, cancel the gesture of return
+    if ([context isCancelled] == YES)
+    {
+        double cancelDuration = [context transitionDuration] * [context percentComplete];
+        [UIView animateWithDuration:cancelDuration animations:^{
+            animations(UITransitionContextFromViewControllerKey);
+        }];
+    }
+    else
+    {
+        // after that, finish the gesture of return
+        double finishDuration = [context transitionDuration] * (1 - [context percentComplete]);
+        [UIView animateWithDuration:finishDuration animations:^{
+            animations(UITransitionContextToViewControllerKey);
+        }];
+    }
+}
+- (void)dealInteractionChanges:(id<UIViewControllerTransitionCoordinatorContext>)context
+{
+    void (^animations) (UITransitionContextViewControllerKey) = ^(UITransitionContextViewControllerKey key){
+        UIColor *curColor = [[context viewControllerForKey:key] wr_navBarBarTintColor];
+        CGFloat curAlpha = [[context viewControllerForKey:key] wr_navBarBackgroundAlpha];
+        //[self setNeedsNavigationBarUpdateForBarTintColor:curColor];//old
+        //[self setNeedsNavigationBarUpdateForBarBackgroundAlpha:curAlpha];//old
+        
+        //zzz
+        UIImage *vc1_barBgImage = [[context viewControllerForKey:UITransitionContextFromViewControllerKey] wr_navBarBackgroundImage];
+        UIImage *vc2_barBgImage = [[context viewControllerForKey:UITransitionContextToViewControllerKey] wr_navBarBackgroundImage];
+        if(vc1_barBgImage==nil&&vc2_barBgImage==nil){
+            [self setNeedsNavigationBarUpdateForBarTintColor:curColor];//old
+            [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:curAlpha];//old
+        }else{
+            if(1){//动画体
+                CGFloat curAlpha = [[context viewControllerForKey:key] wr_navBarBackgroundAlpha];
+                curAlpha = curAlpha>1.0?1.0:curAlpha;
+                [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:curAlpha];
+                //topIv:最后要动画成的alph值
+                //push
+                CGFloat topIvAlpha = 1.0;
+                //pop
+                if([key isEqualToString:UITransitionContextToViewControllerKey]){
+                    topIvAlpha = 0.0;
+                }
+                [self setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:topIvAlpha];//背景alpha
+            }
+        }
     };
     
     // after that, cancel the gesture of return
@@ -880,6 +1092,28 @@ static char kWRCustomNavBarKey;
 }
 
 @end
+
+
+
+
+#pragma mark - UIImage
+@implementation UIImage (ZZAdd)
++ (UIImage *)imageWithColor:(UIColor *)color {
+    return [self imageWithColor:color size:CGSizeMake(1, 1)];
+}
++ (UIImage *)imageWithColor:(UIColor *)color size:(CGSize)size {
+    if (!color || size.width <= 0 || size.height <= 0) return nil;
+    CGRect rect = CGRectMake(0.0f, 0.0f, size.width, size.height);
+    UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, color.CGColor);
+    CGContextFillRect(context, rect);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+@end
+//video.com.wangrui
 
 
 
