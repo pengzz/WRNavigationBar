@@ -552,7 +552,7 @@ static int wrPushDisplayCount = 0;
         [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
     }
     else{
-        NSLog(@"progress==%f",  progress);
+        //NSLog(@"progress==%f",  progress);
         UIImage *fromVC_barBgImage = [fromVC wr_navBarBackgroundImage];
         UIImage *toVC_barBgImage = [toVC wr_navBarBackgroundImage];
         CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
@@ -592,11 +592,11 @@ static int wrPushDisplayCount = 0;
         if(topVC==toVC){//push
             topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:progress];
         }
-        NSLog(@"before:topIvAlpha==%f",topIvAlpha);
+        //NSLog(@"before:topIvAlpha==%f",topIvAlpha);
         topIvAlpha = topIvAlpha/newBarBackgroundAlpha;
-        NSLog(@"比例后before:topIvAlpha==%f",topIvAlpha);
+        //NSLog(@"比例后before:topIvAlpha==%f",topIvAlpha);
         topIvAlpha = topIvAlpha>1.0?1.0:topIvAlpha;
-        NSLog(@"修正后before:topIvAlpha==%f",topIvAlpha);
+        //NSLog(@"修正后before:topIvAlpha==%f",topIvAlpha);
         [self setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:topIvAlpha];//背景alpha
     }
     
@@ -1113,7 +1113,6 @@ static char kWRCustomNavBarKey;
     return image;
 }
 @end
-//video.com.wangrui
 
 
 
