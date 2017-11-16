@@ -226,7 +226,14 @@ static char kWRBackgroundImageKey;
 - (void)wr_setBackgroundAlpha:(CGFloat)alpha
 {
     UIView *barBackgroundView = self.subviews.firstObject;
-    barBackgroundView.alpha = alpha;
+    if (@available(iOS 11.0, *))
+    {   // sometimes we can't change _UIBarBackground alpha
+        for (UIView *view in barBackgroundView.subviews) {
+            view.alpha = alpha;
+        }
+    } else {
+        barBackgroundView.alpha = alpha;
+    }
 }
 
 - (void)wr_setBarButtonItemsAlpha:(CGFloat)alpha hasSystemBackIndicator:(BOOL)hasSystemBackIndicator
@@ -701,7 +708,8 @@ static char kWRCustomNavBarKey;
     }
     else
     {
-        if ([self pushToCurrentVCFinished] == YES && [self pushToNextVCFinished] == NO) {
+        BOOL isRootViewController = (self.navigationController.viewControllers.firstObject == self);
+        if (([self pushToCurrentVCFinished] == YES || isRootViewController == YES) && [self pushToNextVCFinished] == NO) {
             [self.navigationController setNeedsNavigationBarUpdateForBarTintColor:color];
         }
     }
@@ -724,7 +732,8 @@ static char kWRCustomNavBarKey;
     }
     else
     {
-        if ([self pushToCurrentVCFinished] == YES && [self pushToNextVCFinished] == NO) {
+        BOOL isRootViewController = (self.navigationController.viewControllers.firstObject == self);
+        if (([self pushToCurrentVCFinished] == YES || isRootViewController == YES) && [self pushToNextVCFinished] == NO) {
             [self.navigationController setNeedsNavigationBarUpdateForBarBackgroundAlpha:alpha];
         }
     }
@@ -844,8 +853,7 @@ static char kWRCustomNavBarKey;
 
 - (void)wr_viewWillDisappear:(BOOL)animated
 {
-    if ([self canUpdateNavigationBar] == YES)
-    {
+    if ([self canUpdateNavigationBar] == YES) {
         [self setPushToNextVCFinished:YES];
     }
     [self wr_viewWillDisappear:animated];
@@ -863,8 +871,7 @@ static char kWRCustomNavBarKey;
         }
         [self.navigationController setNeedsNavigationBarUpdateForBarBackgroundAlpha:[self wr_navBarBackgroundAlpha]];
         [self.navigationController setNeedsNavigationBarUpdateForTintColor:[self wr_navBarTintColor]];
-        // 临时解决办法（self.navigationBar.titleTextAttributes = newTitleTextAttributes内部有问题）
-//        [self.navigationController setNeedsNavigationBarUpdateForTitleColor:[self wr_navBarTitleColor]];
+        [self.navigationController setNeedsNavigationBarUpdateForTitleColor:[self wr_navBarTitleColor]];
         [self.navigationController setNeedsNavigationBarUpdateForShadowImageHidden:[self wr_navBarShadowImageHidden]];
     }
     [self wr_viewDidAppear:animated];
