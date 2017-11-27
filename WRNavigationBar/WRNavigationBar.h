@@ -73,6 +73,7 @@
 /** record current ViewController navigationBar backgroundAlpha */
 - (void)wr_setNavBarBackgroundAlpha:(CGFloat)alpha;
 - (CGFloat)wr_navBarBackgroundAlpha;
+- (void)wr_setNavBarBackgroundAlpha_justValue:(CGFloat)alpha;//zzz
 
 /** record current ViewController navigationBar tintColor */
 - (void)wr_setNavBarTintColor:(UIColor *)color;
@@ -113,4 +114,175 @@ NS_ASSUME_NONNULL_END
 
 
 
+
+
+//[16:58:28] -[UIScrollView(AllowPanGestureEventPass) hitTest:withEvent:] [第101行]
+//
+//[16:58:28] -[UIScrollView(AllowPanGestureEventPass) hitTest:withEvent:] [第101行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_popViewControllerAnimated:] [第662行]
+//
+//[16:58:36] -[SettingVC viewWillDisappear:] [第124行]
+//
+//[17:32:35] -[UIViewController(WRAddition) wr_viewWillDisappear:] [第1114行]
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1152行] self.navigationController.navigationBarHidden==0
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1153行] self.navigationController.viewControllers.count==1
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1154行] self.navigationBar.items.count==2
+//
+//[16:58:44] -[DCViewController viewWillDisappear:] [第103行]
+//
+//[16:58:55] -[MineVC viewWillAppear:] [第88行]
+//
+//[17:32:35] -[UIViewController(WRAddition) wr_viewWillAppear:] [第1102行]
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1152行] self.navigationController.navigationBarHidden==0
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1153行] self.navigationController.viewControllers.count==1
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1154行] self.navigationBar.items.count==2
+//
+//[16:58:44] -[DCViewController viewWillAppear:] [第98行]
+//
+//[16:57:55] -[HealthKitManger isOpenHKAuthorizationStatus] [第415行] HKAuthorizationStatusNotDetermined
+//
+//[16:57:55] +[HealthKitManger requestStepCount_withBlock:] [第494行] 第一次，先不去上传下传刷新步数
+//
+//[16:58:44] -[DCViewController viewSafeAreaInsetsDidChange] [第295行]
+//
+//[16:58:44] -[DCViewController viewSafeAreaInsetsDidChange] [第295行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[17:32:35] -[UINavigationController(WRAddition) wr_updateInteractiveTransition:] [第884行]
+//
+//[16:58:55] -[MineVC viewWillDisappear:] [第77行]
+//
+//[17:32:35] -[UIViewController(WRAddition) wr_viewWillDisappear:] [第1114行]
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1152行] self.navigationController.navigationBarHidden==0
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1153行] self.navigationController.viewControllers.count==2
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1154行] self.navigationBar.items.count==2
+//
+//[16:58:44] -[DCViewController viewWillDisappear:] [第103行]
+//
+//[16:58:55] -[MineVC viewDidDisappear:] [第83行]
+//
+//[16:58:36] -[SettingVC viewWillAppear:] [第112行]
+//
+//[17:32:35] -[UIViewController(WRAddition) wr_viewWillAppear:] [第1102行]
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1152行] self.navigationController.navigationBarHidden==0
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1153行] self.navigationController.viewControllers.count==2
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1154行] self.navigationBar.items.count==2
+//
+//[16:58:44] -[DCViewController viewWillAppear:] [第98行]
+//
+//[16:58:36] -[SettingVC viewDidAppear:] [第119行]
+//
+//[17:32:35] -[UIViewController(WRAddition) wr_viewDidAppear:] [第1123行]
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1152行] self.navigationController.navigationBarHidden==0
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1153行] self.navigationController.viewControllers.count==2
+//
+//[17:32:35] -[UIViewController(WRAddition) canUpdateNavigationBar] [第1154行] self.navigationBar.items.count==2
+//
+//[16:58:44] -[DCViewController viewDidAppear:] [第87行]
+//
+//[16:58:56] +[AppVersionAlertView appVersionCheck_hasNewVersion] [第488行] 没有新版本更新...
 
