@@ -681,8 +681,11 @@ static int wrPushDisplayCount = 0;
 {
     NSLog(@"");
     if (@available(iOS 11.0, *)) {
-        //ios11在vc中主动调用popToViewController方法时，会首先来这，后面shouldPopItem的后面代码再来一次，造成动画过程两次则导航栏会闪一下的感觉，（ios10情况暂未知）
-        if(self.viewControllers.count==self.navigationBar.items.count){//主动且第一次进入时相等
+        //坑1：ios11在vc中主动调用popToViewController方法时，会首先来这，后面shouldPopItem的后面代码再来一次，造成动画过程两次则导航栏会闪一下的感觉，（ios10情况暂未知）
+        //坑2：注意如果当前的navigationBarHidden为YES的话，则后面不执行shouldPopItem方法
+        if(self.navigationBarHidden==YES){
+            //还是走原代码
+        }else if(self.viewControllers.count==self.navigationBar.items.count){//主动且第一次进入时相等
             NSArray<UIViewController *> *vcs = [self wr_popToViewController:viewController animated:animated];
             return vcs;
         }
