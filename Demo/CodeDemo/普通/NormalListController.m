@@ -16,7 +16,9 @@
 #import "AntForestController.h"
 #import "AllTransparent.h"
 #import "LaGouController.h"
+#import "SpecialController.h"
 #import "WRNavigationBar.h"
+#import "TestController.h"
 #import "PzzAllTransparent.h"
 
 @interface NormalListController () <UITableViewDelegate, UITableViewDataSource>
@@ -43,7 +45,7 @@
 #pragma mark - tableview delegate / dataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 8+1;
+    return 10+1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -77,6 +79,12 @@
             str = @"拉钩App首页";
             break;
         case 8:
+            str = @"WRNavigationBar 对其不产生任何印象";
+            break;
+        case 9:
+            str = @"测试 IQKeyBoardManager 对其影响";
+            break;
+        case 10:
             str = @"zz导航栏图片渐变";
             break;
         default:
@@ -89,7 +97,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 50;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -145,6 +153,18 @@
         }
             break;
         case 8:
+        {
+            SpecialController *specialVC = [SpecialController new];
+            [self.navigationController pushViewController:specialVC animated:YES];
+        }
+            break;
+        case 9:
+        {
+            TestController *testVC = [TestController new];
+            [self.navigationController pushViewController:testVC animated:YES];
+        }
+            break;
+        case 10:
         {
             PzzAllTransparent *vc = [PzzAllTransparent new];
             [self.navigationController pushViewController:vc animated:YES];
