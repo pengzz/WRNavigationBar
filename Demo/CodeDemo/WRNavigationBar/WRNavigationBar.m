@@ -1158,12 +1158,12 @@ static char kWRSystemNavBarTitleColorKey;
                 [self wr_setSystemNavBarBarTintColor:[self wr_navBarBarTintColor]];
             }
             if ([self wr_systemNavBarTintColor] == nil) {
-                [self wr_setSystemNavBarTintColor:[self wr_navBarTintColor]];
+                [self wr_setSystemNavBarTintColor:[self wr_navBarTintColor]];//这一步先取出self.navigationController.navigationBar.tintColor自带的tintColor附值给wr_systemNavBarTintColor；注意这以便后面取wr_navBarTintColor的值时都用了wr_systemNavBarTintColor值！
             }
             if ([self wr_systemNavBarTitleColor] == nil) {
                 [self wr_setSystemNavBarTitleColor:[self wr_navBarTitleColor]];
             }
-            [self.navigationController setNeedsNavigationBarUpdateForTintColor:[self wr_navBarTintColor]];
+            [self.navigationController setNeedsNavigationBarUpdateForTintColor:[self wr_navBarTintColor]];//这一步再取出wr_systemNavBarTintColor值，设值给self.navigationBar.tintColor回去
         }
         [self setPushToNextVCFinished:NO];
         [self.navigationController setNeedsNavigationBarUpdateForTitleColor:[self wr_navBarTitleColor]];
@@ -1239,7 +1239,7 @@ static char kWRSystemNavBarTitleColorKey;
     //NSLog(@"self.navigationController.viewControllers.count==%@",@(self.navigationController.viewControllers.count));
     //NSLog(@"self.navigationController.navigationBar.items.count==%@",@(self.navigationController.navigationBar.items.count));
     //zzz
-    if(1){//TO DO
+    if(1-1){//TO DO
         //保持原代码逻辑不变，做如下处理：
         if(self.navigationController){
             UIViewController *fromVC = [self.navigationController.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];

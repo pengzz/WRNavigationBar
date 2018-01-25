@@ -103,17 +103,14 @@
 		1AAE08E81EE7F3350085C3A2 /* MoveListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoveListController.m; sourceTree = "<group>"; };
 		1AAE08EA1EE7F38E0085C3A2 /* CustomListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomListController.h; sourceTree = "<group>"; };
 		1AAE08EB1EE7F38E0085C3A2 /* CustomListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomListController.m; sourceTree = "<group>"; };
-
 		1BC1FABA1FB464AC00343408 /* PzzAllTransparent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PzzAllTransparent.h; sourceTree = "<group>"; };
 		1BC1FABB1FB464AC00343408 /* PzzAllTransparent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PzzAllTransparent.m; sourceTree = "<group>"; };
 		1BC1FABC1FB464AC00343408 /* PzzAllTransparent2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PzzAllTransparent2.m; sourceTree = "<group>"; };
 		1BC1FABD1FB464AC00343408 /* PzzAllTransparent2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PzzAllTransparent2.h; sourceTree = "<group>"; };
-
 		3428F8172011AB1D00724F83 /* TestController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestController.h; sourceTree = "<group>"; };
 		3428F8182011AB1D00724F83 /* TestController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestController.m; sourceTree = "<group>"; };
 		34321EAE1FDCE3AD00833E79 /* SpecialController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpecialController.h; sourceTree = "<group>"; };
 		34321EAF1FDCE3AD00833E79 /* SpecialController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpecialController.m; sourceTree = "<group>"; };
-
 		34E384B51F9C358700257F91 /* WRCustomNavigationBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WRCustomNavigationBar.h; sourceTree = "<group>"; };
 		34E384B61F9C358700257F91 /* WRCustomNavigationBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WRCustomNavigationBar.m; sourceTree = "<group>"; };
 		37581D1AF27611119D8AA286 /* Pods-CodeDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CodeDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CodeDemo/Pods-CodeDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -230,17 +227,14 @@
 				1AADC3911F22F73A00BB73D9 /* AllTransparent.m */,
 				1A5845E41F270D4500A24234 /* LaGouController.h */,
 				1A5845E51F270D4500A24234 /* LaGouController.m */,
-
 				1BC1FABA1FB464AC00343408 /* PzzAllTransparent.h */,
 				1BC1FABB1FB464AC00343408 /* PzzAllTransparent.m */,
 				1BC1FABD1FB464AC00343408 /* PzzAllTransparent2.h */,
 				1BC1FABC1FB464AC00343408 /* PzzAllTransparent2.m */,
-
 				34321EAE1FDCE3AD00833E79 /* SpecialController.h */,
 				34321EAF1FDCE3AD00833E79 /* SpecialController.m */,
 				3428F8172011AB1D00724F83 /* TestController.h */,
 				3428F8182011AB1D00724F83 /* TestController.m */,
-
 			);
 			path = "普通";
 			sourceTree = "<group>";
@@ -639,9 +633,7 @@
 				INFOPLIST_FILE = CodeDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-
-				PRODUCT_BUNDLE_IDENTIFIER = video.com.wangrui460;
-
+				PRODUCT_BUNDLE_IDENTIFIER = com.cdc.test2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -661,9 +653,7 @@
 				INFOPLIST_FILE = CodeDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-
-				PRODUCT_BUNDLE_IDENTIFIER = video.com.wangrui460;
-
+				PRODUCT_BUNDLE_IDENTIFIER = com.cdc.test2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
