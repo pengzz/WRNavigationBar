@@ -1,3 +1,5 @@
+ ### 注意：联系方式变更（因QQ常年不用，所以联系方式换成微信，请在页面底部查看）
+
 ![image](https://github.com/wangrui460/WRNavigationBar/raw/master/screenshots/WRNavigationBar.png)
 
 <p align="center">
@@ -17,44 +19,51 @@
 ------------------------------------------------------------
 
 ## Requirements
-- iOS 8+
+- iOS 7.0+
 - Xcode 8+
 
 
 ## Demo
-![拉钩App首页](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/拉钩App首页.gif)
 
-![导航栏显示渐变色](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/导航栏显示渐变色.gif)
-
-![导航栏显示图片](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/导航栏显示图片.gif)
-
-![新浪微博个人中心](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/新浪微博个人中心.gif)
-
-![qq空间](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/qq空间.gif)
-
-![知乎日报](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/知乎日报.gif)
-
-![QQ我的资料页](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/QQ我的资料页.gif)
-
-![蚂蚁森林](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/蚂蚁森林.gif)
-
-![连续多个界面导航栏透明](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/连续多个界面导航栏透明.gif)
-
-![自定义导航栏](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/自定义导航栏.gif)
-
-![移动导航栏](https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/移动导航栏.gif)
+<div class="wrap">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/拉钩App首页.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/导航栏显示渐变色.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/导航栏显示图片.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/新浪微博个人中心.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/qq空间.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/知乎日报.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/QQ我的资料页.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/蚂蚁森林.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/连续多个界面导航栏透明.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/自定义导航栏.gif" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar_swift/raw/master/screenshots/移动导航栏.gif" alt="">
+</div>
 
 
 ## Installation
 > **CocoaPods**
-> pod 'WRNavigationBar','~>1.0.3’
-如果未发现 1.0.3 请更新一下pod
+> pod 'WRNavigationBar','~>1.2.0’
+如果未发现 1.2.0 请更新一下pod
 
 
 > **手动拖入**
 > 将 WRNavigationBar 文件夹拽入项目中，导入头文件：#import "WRNavigationBar.h"，自定义导航栏需要导入 "WRCustomNavigationBar.h"
 
-## Use （以下方式不再适用自定义导航栏，自定义导航栏的使用方式请查看Demo）
+### Use （以下方式不再适用自定义导航栏，自定义导航栏的使用方式请查看Demo）
+✨✨ 一定要看 Demo 中的 AppDelegate 文件 ✨✨
+
+<pre><code>
+// 设置是 全局使用WRNavigationBar，还是局部使用WRNavigationBar，目前默认是全局使用 （局部使用待开发）
+[WRNavigationBar wr_widely];
+// WRNavigationBar 不会对 blackList 中的控制器有影响
+[WRNavigationBar wr_setBlacklist:@[@"SpecialController",
+                                                            @"TZPhotoPickerController",
+                                                            @"TZGifPhotoPreviewController",
+                                                            @"TZAlbumPickerController",
+                                                            @"TZPhotoPreviewController",
+                                                            @"TZVideoPlayerController"]];
+</code></pre>
+
 <pre><code>
 // 一行代码搞定导航栏颜色
 [self wr_setNavBarBarTintColor:[UIColor whiteColor]];
@@ -72,15 +81,15 @@
 
 <pre><code>
 // 设置导航栏默认的背景颜色
-[UIColor wr_setDefaultNavBarBarTintColor:MainNavBarColor];
+[WRNavigationBar wr_setDefaultNavBarBarTintColor:MainNavBarColor];
 // 设置导航栏所有按钮的默认颜色
-[UIColor wr_setDefaultNavBarTintColor:[UIColor whiteColor]];
+[WRNavigationBar wr_setDefaultNavBarTintColor:[UIColor whiteColor]];
 // 设置导航栏标题默认颜色
-[UIColor wr_setDefaultNavBarTitleColor:[UIColor whiteColor]];
+[WRNavigationBar wr_setDefaultNavBarTitleColor:[UIColor whiteColor]];
 // 统一设置状态栏样式
-[UIColor wr_setDefaultStatusBarStyle:UIStatusBarStyleLightContent];
+[WRNavigationBar wr_setDefaultStatusBarStyle:UIStatusBarStyleLightContent];
 // 如果需要设置导航栏底部分割线隐藏，可以在这里统一设置
-[UIColor wr_setDefaultNavBarShadowImageHidden:YES];
+[WRNavigationBar wr_setDefaultNavBarShadowImageHidden:YES];
 </code></pre>
 
 
@@ -89,13 +98,31 @@
 
 
 ## Update
+- **2018.01.19**
+重大更新：1. 增加 "黑名单" 功能   2. 解决微信视频通话进入后台，打开App导航栏位置偏移的bug   3. 解决 IQKeyboardManager 导致的导航栏位置偏移的bug
+
+- **2017.12.15**
+解决问题：解决在 iOS11.1.2上无法生效的问题
+
+- **2017.12.14**
+解决问题：支持 Nav-TabBar-ViewControllers 结构的项目
+
+- **2017.12.09**
+解决问题：解决导航栏颜色和标题颜色改变失败的bug
+
+- **2017.12.09**
+解决问题：解决点击返回按钮导航栏标题颜色闪烁的问题
+
+- **2017.11.30**
+解决问题： 解决 因为页面还在滑动，然后push下一个页面 API 无效的bug
+
 - **2017.11.24**
 解决问题：解决部分老铁出现的第一次进入页面Api设置无效的问题~
 
 - **2017.11.15**
 解决问题：傻逼的自己，不知道什么时候把 Demo 里面设置默认隐藏导航栏底部黑线的方法给注释了，实际库没有问题，重要的是我竟然没发现~
 
-- **2017.11.8**
+- **2017.11.08**
 解决问题：解决取消返回手势导航栏变不透明度的问题、解决滑动改变标题颜色导航栏闪一下的问题
 
 - **2017.10.29**
@@ -143,9 +170,17 @@
 # Contact me
 - Weibo: [@wangrui460](http://weibo.com/wangrui460)
 - Email:  wangruidev@gmail.com
-- QQ：1204607318
+- QQ：1204607318 （基本不用）
+- 微信群：下图所示
+
+<div class="wrap">
+<img src="https://github.com/wangrui460/WRNavigationBar/raw/master/screenshots/group.png" alt="">
+<img src="https://github.com/wangrui460/WRNavigationBar/raw/master/screenshots/appreciate.png" alt="">
+</div>
+
 
 # License
 WRNavigationBar is available under the MIT license. See the LICENSE file for more info.
+
 
 
