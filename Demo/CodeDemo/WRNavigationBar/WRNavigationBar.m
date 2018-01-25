@@ -509,12 +509,7 @@ static int wrPushDisplayCount = 0;
     self.navigationBar.titleTextAttributes = newTitleTextAttributes;
 }
 
-<<<<<<< HEAD
-- (void)updateNavigationBarWithFromVC0:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress
-{
-=======
-- (void)updateNavigationBarWithFromVC:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress {
->>>>>>> master
+- (void)updateNavigationBarWithFromVC0:(UIViewController *)fromVC toVC:(UIViewController *)toVC progress:(CGFloat)progress {
     // change navBarBarTintColor
     UIColor *fromBarTintColor = [fromVC wr_navBarBarTintColor];
     UIColor *toBarTintColor = [toVC wr_navBarBarTintColor];
@@ -557,7 +552,9 @@ static int wrPushDisplayCount = 0;
         UIColor *fromBarTintColor = [fromVC wr_navBarBarTintColor];
         UIColor *toBarTintColor = [toVC wr_navBarBarTintColor];
         UIColor *newBarTintColor = [WRNavigationBar middleColor:fromBarTintColor toColor:toBarTintColor percent:progress];
-        [self setNeedsNavigationBarUpdateForBarTintColor:newBarTintColor];
+        if ([WRNavigationBar needUpdateNavigationBar:fromVC] || [WRNavigationBar needUpdateNavigationBar:toVC]) {
+            [self setNeedsNavigationBarUpdateForBarTintColor:newBarTintColor];
+        }
         
         // change navBar _UIBarBackground alpha
         CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
@@ -566,82 +563,89 @@ static int wrPushDisplayCount = 0;
         [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
     }
     else{
+        BOOL flag = NO;
+        if ([WRNavigationBar needUpdateNavigationBar:fromVC] || [WRNavigationBar needUpdateNavigationBar:toVC]) {
+            flag = YES;
+        }
         //NSLog(@"progress==%f",  progress);
-        UIImage *fromVC_barBgImage = [fromVC wr_navBarBackgroundImage];
-        UIImage *toVC_barBgImage = [toVC wr_navBarBackgroundImage];
         CGFloat fromBarBackgroundAlpha0 = [fromVC wr_navBarBackgroundAlpha];
         CGFloat toBarBackgroundAlpha0 = [toVC wr_navBarBackgroundAlpha];
-        CGFloat fromBarBackgroundAlpha = fromBarBackgroundAlpha0;
-        CGFloat toBarBackgroundAlpha = toBarBackgroundAlpha0;
-        if(fromBarBackgroundAlpha>1.0){
-            fromBarBackgroundAlpha=1.0;
-        }
-        if(toBarBackgroundAlpha>1.0){
-            toBarBackgroundAlpha=1.0;
-        }
+        CGFloat fromBarBackgroundAlpha = fromBarBackgroundAlpha0>1.0?1.0:fromBarBackgroundAlpha0;
+        CGFloat toBarBackgroundAlpha = toBarBackgroundAlpha0>1.0?1.0:toBarBackgroundAlpha0;
         //隐藏时alpha为负值
         if(fromBarBackgroundAlpha0<0.0||toBarBackgroundAlpha0<0.0){
             if(fromBarBackgroundAlpha0<0.0&&toBarBackgroundAlpha0<0.0){
                 fromBarBackgroundAlpha=0.0;
                 toBarBackgroundAlpha=0.0;
-            }
-            else if(fromBarBackgroundAlpha<0.0){
+            } else if(fromBarBackgroundAlpha<0.0){
                 fromBarBackgroundAlpha=toBarBackgroundAlpha;
-            }
-            else if(toBarBackgroundAlpha<0.0){
+            } else if(toBarBackgroundAlpha<0.0){
                 toBarBackgroundAlpha=fromBarBackgroundAlpha;
             }
         }
-        fromVC_barBgImage = fromVC_barBgImage!=nil?fromVC_barBgImage:[UIImage imageWithColor:[fromVC wr_navBarBarTintColor]];
-        toVC_barBgImage   = toVC_barBgImage!=nil?toVC_barBgImage:[UIImage imageWithColor:[toVC wr_navBarBarTintColor]];
         CGFloat newBarBackgroundAlpha = [WRNavigationBar middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
         
         //1:先设置两个背景image
-        UIImage *top_image = nil;
-        UIImage *down_image = nil;
-        if(topVC==fromVC){//pop
-            top_image = fromVC_barBgImage;
-            down_image = toVC_barBgImage;
-        }
-        if(topVC==toVC){//push
-            top_image = toVC_barBgImage;
-            down_image = fromVC_barBgImage;
-        }
-        if(fromBarBackgroundAlpha0<0.0||toBarBackgroundAlpha0<0.0){
-            if(fromBarBackgroundAlpha0<0.0&&toBarBackgroundAlpha0<0.0){
-                [self setNeedsNavigationBarUpdateForBarBackgroundImage:toVC_barBgImage];
-            }else if(fromBarBackgroundAlpha0<0.0){
-                [self setNeedsNavigationBarUpdateForBarBackgroundImage:toVC_barBgImage];
-            }else if(toBarBackgroundAlpha0<0.0){
-                [self setNeedsNavigationBarUpdateForBarBackgroundImage:fromVC_barBgImage];
+        BOOL isNotTheSameImage = NO;
+        if(flag){
+            UIImage *fromVC_barBgImage = [fromVC wr_navBarBackgroundImage];
+            UIImage *toVC_barBgImage = [toVC wr_navBarBackgroundImage];
+            isNotTheSameImage = fromVC_barBgImage!=toVC_barBgImage;//判断前后两个图片是否是同一个对象(都为nil前面处理过了)
+            //
+            fromVC_barBgImage = fromVC_barBgImage!=nil?fromVC_barBgImage:[UIImage imageWithColor:[fromVC wr_navBarBarTintColor]];
+            toVC_barBgImage   = toVC_barBgImage!=nil?toVC_barBgImage:[UIImage imageWithColor:[toVC wr_navBarBarTintColor]];
+            if(fromBarBackgroundAlpha0<0.0||toBarBackgroundAlpha0<0.0){
+                if(fromBarBackgroundAlpha0<0.0&&toBarBackgroundAlpha0<0.0){//都隐藏
+                    [self setNeedsNavigationBarUpdateForBarBackgroundImage:toVC_barBgImage];
+                }else if(fromBarBackgroundAlpha0<0.0){
+                    [self setNeedsNavigationBarUpdateForBarBackgroundImage:toVC_barBgImage];
+                }else if(toBarBackgroundAlpha0<0.0){
+                    [self setNeedsNavigationBarUpdateForBarBackgroundImage:fromVC_barBgImage];
+                }
+            }else if(!isNotTheSameImage){
+                [self setNeedsNavigationBarUpdateForBarBackgroundImage:fromVC_barBgImage];//两个图片相同随便弄一个都一样的的
+            }else if(isNotTheSameImage){
+                UIImage *top_image = nil;
+                UIImage *down_image = nil;
+                if(topVC==fromVC){//pop
+                    top_image = fromVC_barBgImage;
+                    down_image = toVC_barBgImage;
+                }
+                if(topVC==toVC){//push
+                    top_image = toVC_barBgImage;
+                    down_image = fromVC_barBgImage;
+                }
+                [self setNeedsNavigationBarUpdateForBarBackgroundImage:down_image topImage:top_image];
             }
-        }else{
-            [self setNeedsNavigationBarUpdateForBarBackgroundImage:down_image topImage:top_image];
         }
         
-        //2:整体backView
+        //2:整体backView 的 背景alpha
         [self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];//背景alpha
         
         //3:topIv
-        if(fromBarBackgroundAlpha0<0.0||toBarBackgroundAlpha0<0.0){
-            //不需要处理
-        }else if(top_image!=down_image){
-            CGFloat topBarBackgroundAlpha = [topVC wr_navBarBackgroundAlpha];
-            topBarBackgroundAlpha = topBarBackgroundAlpha>1.0?1.0:topBarBackgroundAlpha;
-            CGFloat topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];//pop
-            if(topVC==fromVC){//pop
-                topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];
+        if(flag){
+            if(fromBarBackgroundAlpha0<0.0||toBarBackgroundAlpha0<0.0){
+                //不需要处理
+            }else if(!isNotTheSameImage){
+                //不需要处理
+            }else if(isNotTheSameImage){
+                CGFloat topBarBackgroundAlpha = [topVC wr_navBarBackgroundAlpha];
+                topBarBackgroundAlpha = topBarBackgroundAlpha>1.0?1.0:topBarBackgroundAlpha;
+                CGFloat topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];//pop
+                if(topVC==fromVC){//pop
+                    topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:1-progress];
+                }
+                if(topVC==toVC){//push
+                    topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:progress];
+                }
+                //NSLog(@"before:topIvAlpha==%f",topIvAlpha);
+                topIvAlpha = topIvAlpha/newBarBackgroundAlpha;
+                //NSLog(@"比例后before:topIvAlpha==%f",topIvAlpha);
+                topIvAlpha = topIvAlpha>1.0?1.0:topIvAlpha;
+                //NSLog(@"修正后before:topIvAlpha==%f",topIvAlpha);
+                //假如隐藏alpha应为0 TO DO
+                [self setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:topIvAlpha];//背景alpha
             }
-            if(topVC==toVC){//push
-                topIvAlpha = [WRNavigationBar middleAlpha:0.0 toAlpha:topBarBackgroundAlpha percent:progress];
-            }
-            //NSLog(@"before:topIvAlpha==%f",topIvAlpha);
-            topIvAlpha = topIvAlpha/newBarBackgroundAlpha;
-            //NSLog(@"比例后before:topIvAlpha==%f",topIvAlpha);
-            topIvAlpha = topIvAlpha>1.0?1.0:topIvAlpha;
-            //NSLog(@"修正后before:topIvAlpha==%f",topIvAlpha);
-            //假如隐藏alpha应为0 TO DO
-            [self setNeedsNavigationBarUpdateForBarBackgroundAlpha_topIvAlpha:topIvAlpha];//背景alpha
         }
     }
     
@@ -649,33 +653,23 @@ static int wrPushDisplayCount = 0;
     UIColor *fromTintColor = [fromVC wr_navBarTintColor];
     UIColor *toTintColor = [toVC wr_navBarTintColor];
     UIColor *newTintColor = [WRNavigationBar middleColor:fromTintColor toColor:toTintColor percent:progress];
-    [self setNeedsNavigationBarUpdateForTintColor:newTintColor];
+    if ([WRNavigationBar needUpdateNavigationBar:fromVC]) {
+        [self setNeedsNavigationBarUpdateForTintColor:newTintColor];
+    }
     
-    // change navBarTitleColor
+    // change navBarTitleColor（在wr_popToViewController:animated:方法中直接改变标题颜色）
     UIColor *fromTitleColor = [fromVC wr_navBarTitleColor];
     UIColor *toTitleColor = [toVC wr_navBarTitleColor];
     UIColor *newTitleColor = [WRNavigationBar middleColor:fromTitleColor toColor:toTitleColor percent:progress];
     [self setNeedsNavigationBarUpdateForTitleColor:newTitleColor];
-    
-    // change navBar _UIBarBackground alpha
-    //CGFloat fromBarBackgroundAlpha = [fromVC wr_navBarBackgroundAlpha];
-    //CGFloat toBarBackgroundAlpha = [toVC wr_navBarBackgroundAlpha];
-    //CGFloat newBarBackgroundAlpha = [UIColor middleAlpha:fromBarBackgroundAlpha toAlpha:toBarBackgroundAlpha percent:progress];
-    //[self setNeedsNavigationBarUpdateForBarBackgroundAlpha:newBarBackgroundAlpha];
 }
 
 
 #pragma mark - call swizzling methods active 主动调用交换方法
 + (void)load {
     static dispatch_once_t onceToken;
-<<<<<<< HEAD
-    dispatch_once(&onceToken, ^
-    {
-        SEL needSwizzleSelectors[4+1+2] = {
-=======
     dispatch_once(&onceToken, ^{
-        SEL needSwizzleSelectors[4] = {
->>>>>>> master
+        SEL needSwizzleSelectors[4+1+2] = {
             NSSelectorFromString(@"_updateInteractiveTransition:"),
             @selector(setNavigationBarHidden:),//zzz
             @selector(setNavigationBarHidden:animated:),//zzz
@@ -737,9 +731,10 @@ static int wrPushDisplayCount = 0;
     return vc;
 }
 
-<<<<<<< HEAD
-- (NSArray<UIViewController *> *)wr_popToViewController:(UIViewController *)viewController animated:(BOOL)animated
-{
+- (NSArray<UIViewController *> *)wr_popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    // pop 的时候直接改变 barTintColor、tintColor
+    [self setNeedsNavigationBarUpdateForTitleColor:[viewController wr_navBarTitleColor]];
+    [self setNeedsNavigationBarUpdateForTintColor:[viewController wr_navBarTintColor]];
     NSLog(@"");
     if (@available(iOS 11.0, *)) {
         //坑1：ios11在vc中主动调用popToViewController方法时，会首先来这，后面shouldPopItem的后面代码再来一次，造成动画过程两次则导航栏会闪一下的感觉，（ios10情况暂未知）
@@ -751,12 +746,7 @@ static int wrPushDisplayCount = 0;
             return vcs;
         }
     }
-=======
-- (NSArray<UIViewController *> *)wr_popToViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    // pop 的时候直接改变 barTintColor、tintColor
-    [self setNeedsNavigationBarUpdateForTitleColor:[viewController wr_navBarTitleColor]];
-    [self setNeedsNavigationBarUpdateForTintColor:[viewController wr_navBarTintColor]];
->>>>>>> master
+    
     __block CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(popNeedDisplay)];
     [displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     [CATransaction setCompletionBlock:^{
@@ -771,13 +761,8 @@ static int wrPushDisplayCount = 0;
     return vcs;
 }
 
-<<<<<<< HEAD
-- (NSArray<UIViewController *> *)wr_popToRootViewControllerAnimated:(BOOL)animated
-{
-    //NSLog(@"");
-=======
 - (NSArray<UIViewController *> *)wr_popToRootViewControllerAnimated:(BOOL)animated {
->>>>>>> master
+    //NSLog(@"");
     __block CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(popNeedDisplay)];
     [displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
     [CATransaction setCompletionBlock:^{
@@ -836,13 +821,8 @@ static int wrPushDisplayCount = 0;
 }
 
 #pragma mark - deal the gesture of return
-<<<<<<< HEAD
-- (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item
-{
-    //NSLog(@"");
-=======
 - (BOOL)navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item {
->>>>>>> master
+    //NSLog(@"");
     __weak typeof (self) weakSelf = self;
     id<UIViewControllerTransitionCoordinator> coor = [self.topViewController transitionCoordinator];
     if ([coor initiallyInteractive] == YES) {
@@ -869,12 +849,7 @@ static int wrPushDisplayCount = 0;
 }
 
 // deal the gesture of return break off
-<<<<<<< HEAD
-- (void)dealInteractionChanges0:(id<UIViewControllerTransitionCoordinatorContext>)context
-{
-=======
-- (void)dealInteractionChanges:(id<UIViewControllerTransitionCoordinatorContext>)context {
->>>>>>> master
+- (void)dealInteractionChanges0:(id<UIViewControllerTransitionCoordinatorContext>)context {
     void (^animations) (UITransitionContextViewControllerKey) = ^(UITransitionContextViewControllerKey key){
         UIViewController *vc = [context viewControllerForKey:key];
         UIColor *curColor = [vc wr_navBarBarTintColor];
@@ -901,11 +876,9 @@ static int wrPushDisplayCount = 0;
 {
     //NSLog(@"");
     void (^animations) (UITransitionContextViewControllerKey) = ^(UITransitionContextViewControllerKey key){
-        UIColor *curColor = [[context viewControllerForKey:key] wr_navBarBarTintColor];
-        CGFloat curAlpha = [[context viewControllerForKey:key] wr_navBarBackgroundAlpha];
-        //[self setNeedsNavigationBarUpdateForBarTintColor:curColor];//old
-        //[self setNeedsNavigationBarUpdateForBarBackgroundAlpha:curAlpha];//old
-        
+        UIViewController *vc = [context viewControllerForKey:key];
+        UIColor *curColor = [vc wr_navBarBarTintColor];
+        CGFloat curAlpha = [vc wr_navBarBackgroundAlpha];
         //zzz
         UIImage *vc1_barBgImage = [[context viewControllerForKey:UITransitionContextFromViewControllerKey] wr_navBarBackgroundImage];
         UIImage *vc2_barBgImage = [[context viewControllerForKey:UITransitionContextToViewControllerKey] wr_navBarBackgroundImage];
@@ -931,15 +904,13 @@ static int wrPushDisplayCount = 0;
     };
     
     // after that, cancel the gesture of return
-    if ([context isCancelled] == YES)
-    {
-        double cancelDuration = [context transitionDuration] * [context percentComplete];
+    if ([context isCancelled] == YES) {
+        //double cancelDuration = [context transitionDuration] * [context percentComplete];
+        double cancelDuration = 0;
         [UIView animateWithDuration:cancelDuration animations:^{
             animations(UITransitionContextFromViewControllerKey);
         }];
-    }
-    else
-    {
+    } else {
         // after that, finish the gesture of return
         double finishDuration = [context transitionDuration] * (1 - [context percentComplete]);
         [UIView animateWithDuration:finishDuration animations:^{
@@ -948,13 +919,8 @@ static int wrPushDisplayCount = 0;
     }
 }
 
-<<<<<<< HEAD
-- (void)wr_updateInteractiveTransition:(CGFloat)percentComplete
-{
-    //NSLog(@"");
-=======
 - (void)wr_updateInteractiveTransition:(CGFloat)percentComplete {
->>>>>>> master
+    //NSLog(@"");
     UIViewController *fromVC = [self.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toVC = [self.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
     [self updateNavigationBarWithFromVC:fromVC toVC:toVC progress:percentComplete];
@@ -1184,14 +1150,8 @@ static char kWRSystemNavBarTitleColorKey;
     });
 }
 
-<<<<<<< HEAD
-- (void)wr_viewWillAppear:(BOOL)animated
-{
-    //NSLog(@"");
-    if ([self canUpdateNavigationBar] == YES)
-    {
-=======
 - (void)wr_viewWillAppear:(BOOL)animated {
+    //NSLog(@"");
     if ([self canUpdateNavigationBar]) {
         if (![WRNavigationBar needUpdateNavigationBar:self]) {
             if ([self wr_systemNavBarBarTintColor] == nil) {
@@ -1205,7 +1165,6 @@ static char kWRSystemNavBarTitleColorKey;
             }
             [self.navigationController setNeedsNavigationBarUpdateForTintColor:[self wr_navBarTintColor]];
         }
->>>>>>> master
         [self setPushToNextVCFinished:NO];
         [self.navigationController setNeedsNavigationBarUpdateForTitleColor:[self wr_navBarTitleColor]];
     }
@@ -1220,13 +1179,9 @@ static char kWRSystemNavBarTitleColorKey;
 //    }
 }
 
-<<<<<<< HEAD
 - (void)wr_viewWillDisappear:(BOOL)animated
 {
     //NSLog(@"");
-=======
-- (void)wr_viewWillDisappear:(BOOL)animated {
->>>>>>> master
     if ([self canUpdateNavigationBar] == YES) {
         [self setPushToNextVCFinished:YES];
     }
@@ -1235,13 +1190,10 @@ static char kWRSystemNavBarTitleColorKey;
 
 - (void)wr_viewDidAppear:(BOOL)animated
 {
-<<<<<<< HEAD
     //NSLog(@"");
-=======
     if ([self isRootViewController] == NO) {
         self.pushToCurrentVCFinished = YES;
     }
->>>>>>> master
     if ([self canUpdateNavigationBar] == YES)
     {
         UIImage *barBgImage = [self wr_navBarBackgroundImage];
@@ -1283,39 +1235,40 @@ static char kWRSystemNavBarTitleColorKey;
 
 - (BOOL)isRootViewController
 {
-<<<<<<< HEAD
     //NSLog(@"self.navigationController.navigationBarHidden==%@",@(self.navigationController.navigationBarHidden));
     //NSLog(@"self.navigationController.viewControllers.count==%@",@(self.navigationController.viewControllers.count));
     //NSLog(@"self.navigationController.navigationBar.items.count==%@",@(self.navigationController.navigationBar.items.count));
     //zzz
-    //保持原代码逻辑不变，做如下处理：
-    if(self.navigationController){
-        UIViewController *fromVC = [self.navigationController.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
-        UIViewController *toVC = [self.navigationController.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
-        if(fromVC==self){//0:当前self的VC的viewWillDisappear
-            //原来的
-        }else if(toVC==self){//1:viewWillAppear与2:viewDidAppear
-            if([self.navigationController.viewControllers containsObject:self]||self.navigationController==self.parentViewController){//直接在导航栏VC中,以防容器类VC的viewWillAppearg与viewDidAppear修改容器VC的导航栏
-                return YES;
+    if(1){//TO DO
+        //保持原代码逻辑不变，做如下处理：
+        if(self.navigationController){
+            UIViewController *fromVC = [self.navigationController.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextFromViewControllerKey];
+            UIViewController *toVC = [self.navigationController.topViewController.transitionCoordinator viewControllerForKey:UITransitionContextToViewControllerKey];
+            if(fromVC==self){//0:当前self的VC的viewWillDisappear
+                //原来的
+            }else if(toVC==self){//1:viewWillAppear与2:viewDidAppear
+                if([self.navigationController.viewControllers containsObject:self]||self.navigationController==self.parentViewController){//直接在导航栏VC中,以防容器类VC的viewWillAppearg与viewDidAppear修改容器VC的导航栏
+                    return YES;
+                }
             }
         }
-        //if(fromVC==nil&&toVC==nil){//根vc不在push与pop时,或者tab切换时
-        //    return YES;
-        //}
     }
     
-    CGRect viewFrame = self.view.frame;
-    CGRect maxFrame = [UIScreen mainScreen].bounds;
-    CGRect minFrame = CGRectMake(0, WRNavigationBar.navBarBottom, WRNavigationBar.screenWidth, WRNavigationBar.screenHeight-WRNavigationBar.navBarBottom);
-    // 蝙蝠🦇
-    BOOL isBat = CGRectEqualToRect(viewFrame, maxFrame) || CGRectEqualToRect(viewFrame, minFrame);
-    if (self.navigationController && isBat) {
-        return YES;
-=======
+    if(2-2){
+        CGRect viewFrame = self.view.frame;
+        CGRect maxFrame = [UIScreen mainScreen].bounds;
+        CGRect minFrame = CGRectMake(0, WRNavigationBar.navBarBottom, WRNavigationBar.screenWidth, WRNavigationBar.screenHeight-WRNavigationBar.navBarBottom);
+        // 蝙蝠🦇
+        BOOL isBat = CGRectEqualToRect(viewFrame, maxFrame) || CGRectEqualToRect(viewFrame, minFrame);
+        if (self.navigationController && isBat) {
+            return YES;
+        }
+    }
+        
+    //新
     UIViewController *rootViewController = self.navigationController.viewControllers.firstObject;
     if ([rootViewController isKindOfClass:[UITabBarController class]] == NO) {
         return rootViewController == self;
->>>>>>> master
     } else {
         UITabBarController *tabBarController = (UITabBarController *)rootViewController;
         return [tabBarController.viewControllers containsObject:self];
@@ -1323,7 +1276,6 @@ static char kWRSystemNavBarTitleColorKey;
 }
 
 @end
-<<<<<<< HEAD
 
 
 
@@ -1346,7 +1298,4 @@ static char kWRSystemNavBarTitleColorKey;
 }
 @end
 
-
-
-=======
->>>>>>> master
+    
